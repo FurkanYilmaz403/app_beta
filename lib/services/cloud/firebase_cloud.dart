@@ -12,7 +12,7 @@ class FirebaseCloud {
   final users = FirebaseFirestore.instance.collection('users');
   final storage = FirebaseStorage.instance;
 
-  final user = FirebaseAuthProvider(FirebaseAuth.instance).user;
+  final user = FirebaseAuthProvider(FirebaseAuth.instance).currentUser;
 
   Future<QueryDocumentSnapshot<Map<String, dynamic>>> checkReference(
       {required reference}) async {
@@ -123,7 +123,7 @@ class FirebaseCloud {
       return "İstediğiniz adrese şu anlık servis sağlayamıyoruz. Servis menzilimizi genişletene kadar beklediğiniz için teşekkür ederiz.";
     }
     final userDocs =
-        await users.where("Kullanıcı ID", isEqualTo: user.uid).get();
+        await users.where("Kullanıcı ID", isEqualTo: user?.uid).get();
     await userDocs.docs.first.reference.collection("Adres").add({
       "Konum": location,
       "Açık Adres": "ksdljglkdsjgl",
@@ -134,7 +134,7 @@ class FirebaseCloud {
 
   Future<QuerySnapshot> getAddresses() async {
     final userDocs =
-        await users.where("Kullanıcı ID", isEqualTo: user.uid).get();
+        await users.where("Kullanıcı ID", isEqualTo: user?.uid).get();
     return await userDocs.docs.first.reference.collection("Adres").get();
   }
 }

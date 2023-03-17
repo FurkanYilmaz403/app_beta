@@ -11,7 +11,14 @@ class FirebaseAuthProvider {
   final FirebaseAuth _auth;
   FirebaseAuthProvider(this._auth);
 
-  User get user => _auth.currentUser!;
+  User? get currentUser {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      return user;
+    } else {
+      return null;
+    }
+  }
 
   // Email sign up
   Future<void> signUpWithEmail({
@@ -74,8 +81,8 @@ class FirebaseAuthProvider {
         await FirebaseFirestore.instance.collection("users").add({
           "İsim": name,
           "E-posta": email,
-          "Kullanıcı ID": user.uid,
-          "Kullanıcı Telefon": user.phoneNumber,
+          "Kullanıcı ID": currentUser?.uid,
+          "Kullanıcı Telefon": currentUser?.phoneNumber,
           "Kullanıcı Referans Kodu": referenceCode,
           "Referans": false,
           "Kullanılan Referans Kodu": "",
@@ -99,8 +106,8 @@ class FirebaseAuthProvider {
         await FirebaseFirestore.instance.collection("users").add({
           "İsim": name,
           "E-posta": email,
-          "Kullanıcı ID": user.uid,
-          "Kullanıcı Telefon": user.phoneNumber,
+          "Kullanıcı ID": currentUser?.uid,
+          "Kullanıcı Telefon": currentUser?.phoneNumber,
           "Kullanıcı Referans Kodu": referenceCode,
           "Referans": true,
           "Kullanılan Referans Kodu":
@@ -109,7 +116,7 @@ class FirebaseAuthProvider {
           "Davet Edilen Kişi Sayısı": 0,
         });
       }
-      user.updateEmail(email);
+      currentUser?.updateEmail(email);
       return null;
     } catch (e) {
       return e.toString();
