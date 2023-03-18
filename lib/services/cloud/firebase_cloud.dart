@@ -99,9 +99,13 @@ class FirebaseCloud {
     final response = await http.get(uri);
     if (response.statusCode == 200) {
       final result = jsonDecode(response.body);
-      return result['rows'][0]['elements'][0]['distance']['value'];
+      if (result['rows'][0]['elements'][0]['status'] != "ZERO_RESULTS") {
+        return result['rows'][0]['elements'][0]['distance']['value'];
+      } else {
+        throw Exception('Hata');
+      }
     } else {
-      throw Exception('Failed to load data');
+      throw Exception('Hata');
     }
   }
 
@@ -112,12 +116,16 @@ class FirebaseCloud {
     int minDistance = -1;
     String warehouseId = "Depo Bulunamadı.";
     for (var element in warehouses.docs) {
-      final distance = await calculateDistance(element["konum"], location);
-      if (distance <= element["menzil"]) {
-        if (minDistance.isNegative || minDistance > distance) {
-          minDistance = distance;
-          warehouseId = element.id;
+      try {
+        final distance = await calculateDistance(element["konum"], location);
+        if (distance <= element["menzil"]) {
+          if (minDistance.isNegative || minDistance > distance) {
+            minDistance = distance;
+            warehouseId = element.id;
+          }
         }
+      } catch (e) {
+        return "İstediğiniz adrese şu anlık servis sağlayamıyoruz. Servis menzilimizi genişletene kadar beklediğiniz için teşekkür ederiz.";
       }
     }
     if (warehouseId == "Depo Bulunamadı.") {
@@ -125,18 +133,31 @@ class FirebaseCloud {
     }
     final userDocs =
         await users.where("Kullanıcı ID", isEqualTo: user?.uid).get();
-    await userDocs.docs.first.reference.collection("Adres").add({
+    final currentAddress =
+        await userDocs.docs.first.reference.collection("Adresler").add({
       "Konum": location,
       "Açık Adres": address,
       "Adres Tipi": addressType,
       "Depo": warehouseId,
     });
+    userDocs.docs.first.reference
+        .set({"Güncel Adres": currentAddress.id}, SetOptions(merge: true));
     return null;
   }
 
   Future<QuerySnapshot> getAddresses() async {
     final userDocs =
         await users.where("Kullanıcı ID", isEqualTo: user?.uid).get();
-    return await userDocs.docs.first.reference.collection("Adres").get();
+    return await userDocs.docs.first.reference.collection("Adresler").get();
+  }
+
+  Future<DocumentSnapshot> getCurrentAddress() async {
+    final userDocs =
+        await users.where("Kullanıcı ID", isEqualTo: user?.uid).get();
+    final addressId = userDocs.docs.first["Güncel Adres"];
+    return await userDocs.docs.first.reference
+        .collection("Adresler")
+        .doc(addressId)
+        .get();
   }
 }

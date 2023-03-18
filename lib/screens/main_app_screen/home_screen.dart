@@ -14,10 +14,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final screenSize = Utils().getScreenSize();
 
-  Widget? productsItemBuilder(BuildContext context, int index) {
-    return null;
-  }
-
   @override
   Widget build(BuildContext context) {
     return ListView(
