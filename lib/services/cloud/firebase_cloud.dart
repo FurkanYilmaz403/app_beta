@@ -105,7 +105,8 @@ class FirebaseCloud {
     }
   }
 
-  Future<String?> setAddress(String location) async {
+  Future<String?> setAddress(
+      String location, String address, String addressType) async {
     final warehouses =
         await FirebaseFirestore.instance.collection("depo").get();
     int minDistance = -1;
@@ -126,7 +127,8 @@ class FirebaseCloud {
         await users.where("Kullanıcı ID", isEqualTo: user?.uid).get();
     await userDocs.docs.first.reference.collection("Adres").add({
       "Konum": location,
-      "Açık Adres": "ksdljglkdsjgl",
+      "Açık Adres": address,
+      "Adres Tipi": addressType,
       "Depo": warehouseId,
     });
     return null;
