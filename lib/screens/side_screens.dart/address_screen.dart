@@ -5,18 +5,28 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class AddressScreen extends StatelessWidget {
+class AddressScreen extends StatefulWidget {
   final DocumentSnapshot? currentAddress;
-  const AddressScreen({Key? key, required this.currentAddress})
+  final Function refresh;
+  const AddressScreen(
+      {Key? key, required this.currentAddress, required this.refresh})
       : super(key: key);
 
+  @override
+  State<AddressScreen> createState() => _AddressScreenState();
+}
+
+class _AddressScreenState extends State<AddressScreen> {
   /*TODO Bu sayfada kaldım. seçim yapıldığında firebasede setCurrentAddress fonksiyonu 
       çalışıcak ve navigator.pop yapılacak. Delete yapıldığında adres silinecek fakat
       ne olacağından tam emin değilim. navigator pop yapılıp current adres istenebilir.
       current adres silindiyse eğer current addresssiz kalınacak. bu durum her türlü açığa kavuşturulmalıydı zaten.*/
 
+  bool loading1 = false;
+
   @override
   Widget build(BuildContext context) {
+    String? selectedAddress = widget.currentAddress?.id;
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: PreferredSize(
@@ -58,12 +68,26 @@ class AddressScreen extends StatelessWidget {
                     margin:
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     child: ListTile(
-                      leading: Radio(
-                        fillColor: const MaterialStatePropertyAll(accentColor),
-                        value: address.id,
-                        groupValue: currentAddress?.id,
-                        onChanged: (value) {},
-                      ),
+                      leading: Stack(children: [
+                        Radio(
+                          fillColor:
+                              const MaterialStatePropertyAll(accentColor),
+                          value: address.id,
+                          groupValue: selectedAddress,
+                          onChanged: (value) async {
+                            setState(() {
+                              loading1 = true;
+                            });
+                            await FirebaseCloud().setCurrentAddress(address.id);
+                            widget.refresh();
+                            setState(() {
+                              loading1 = false;
+                            });
+                            Navigator.pop(context);
+                          },
+                        ),
+                        if (loading1) CircularProgressIndicator()
+                      ]),
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 20.0, vertical: 10.0),
                       title: Text(
@@ -82,7 +106,17 @@ class AddressScreen extends StatelessWidget {
                           Icons.delete,
                           color: warningColor,
                         ),
-                        onPressed: () async {},
+                        onPressed: () async {
+                          setState(() {
+                            loading1 = true;
+                          });
+                          await FirebaseCloud().deleteAddress(address.id);
+                          widget.refresh();
+                          setState(() {
+                            loading1 = true;
+                          });
+                          Navigator.pop(context);
+                        },
                       ),
                     ),
                   ),
@@ -98,7 +132,12 @@ class AddressScreen extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const AddAddressScreen(),
+                            builder: (context) => AddAddressScreen(
+                              refresh: () {
+                                setState(() {});
+                                widget.refresh();
+                              },
+                            ),
                           ),
                         );
                       },

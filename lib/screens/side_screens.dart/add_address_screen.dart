@@ -7,7 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class AddAddressScreen extends StatefulWidget {
-  const AddAddressScreen({Key? key}) : super(key: key);
+  final Function refresh;
+  const AddAddressScreen({Key? key, required this.refresh}) : super(key: key);
 
   @override
   State<AddAddressScreen> createState() => _AddAddressScreenState();
@@ -293,6 +294,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                                       } else {
                                         popSnackBar(context, error);
                                       }
+                                      widget.refresh();
                                       await Future.delayed(
                                           const Duration(milliseconds: 2250));
                                       Navigator.pop(context);

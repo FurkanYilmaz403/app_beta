@@ -160,4 +160,25 @@ class FirebaseCloud {
         .doc(addressId)
         .get();
   }
+
+  Future<void> setCurrentAddress(String currentAddress) async {
+    final userDocs =
+        await users.where("Kullanıcı ID", isEqualTo: user?.uid).get();
+    await userDocs.docs.first.reference
+        .set({"Güncel Adres": currentAddress}, SetOptions(merge: true));
+  }
+
+  Future<void> deleteAddress(String addressID) async {
+    final userDocs =
+        await users.where("Kullanıcı ID", isEqualTo: user?.uid).get();
+    final currentAddress = userDocs.docs.first["Güncel Adres"];
+    await userDocs.docs.first.reference
+        .collection("Adresler")
+        .doc(addressID)
+        .delete();
+    if (addressID == currentAddress) {
+      await userDocs.docs.first.reference
+          .set({"Güncel Adres": null}, SetOptions(merge: true));
+    }
+  }
 }

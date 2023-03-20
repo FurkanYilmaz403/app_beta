@@ -20,30 +20,59 @@ class _AddressState extends State<CurrentAddressBlock> {
     return FutureBuilder<DocumentSnapshot?>(
       future: FirebaseCloud().getCurrentAddress(),
       builder: (context, snapshot) {
-        final addressType = snapshot.data?["Adres Tipi"];
-        final openAddress = snapshot.data?["Açık Adres"];
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasData) {
-            return GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AddressScreen(
-                      currentAddress: snapshot.data,
+            if (snapshot.data!.exists) {
+              final addressType = snapshot.data?["Adres Tipi"];
+              final openAddress = snapshot.data?["Açık Adres"];
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddressScreen(
+                        currentAddress: snapshot.data,
+                        refresh: () {
+                          setState(() {});
+                        },
+                      ),
                     ),
+                  );
+                },
+                child: Container(
+                  height: addressSize,
+                  color: secondaryColor,
+                  child: Text(
+                    addressType + openAddress,
+                    style: const TextStyle(color: darkTextColor),
                   ),
-                );
-              },
-              child: Container(
-                height: addressSize,
-                color: secondaryColor,
-                child: Text(
-                  addressType + openAddress,
-                  style: const TextStyle(color: darkTextColor),
                 ),
-              ),
-            );
+              );
+            } else {
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddressScreen(
+                        currentAddress: null,
+                        refresh: () {
+                          setState(() {});
+                        },
+                      ),
+                    ),
+                  );
+                },
+                child: Container(
+                  height: addressSize,
+                  color: secondaryColor,
+                  child: const Text(
+                    "Lütfen teslimat adresi seçiniz.",
+                    style: TextStyle(color: darkTextColor),
+                  ),
+                ),
+              );
+            }
           } else if (snapshot.hasError) {
             return const Text('Bir hata oluştu.');
           } else {
