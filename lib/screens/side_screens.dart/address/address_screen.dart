@@ -17,11 +17,6 @@ class AddressScreen extends StatefulWidget {
 }
 
 class _AddressScreenState extends State<AddressScreen> {
-  /*TODO Bu sayfada kaldım. seçim yapıldığında firebasede setCurrentAddress fonksiyonu 
-      çalışıcak ve navigator.pop yapılacak. Delete yapıldığında adres silinecek fakat
-      ne olacağından tam emin değilim. navigator pop yapılıp current adres istenebilir.
-      current adres silindiyse eğer current addresssiz kalınacak. bu durum her türlü açığa kavuşturulmalıydı zaten.*/
-
   bool loading1 = false;
 
   @override

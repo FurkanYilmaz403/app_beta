@@ -97,6 +97,9 @@ flutter:
     - family: Ubuntu
       fonts:
         - asset: assets/fonts/Ubuntu-Regular.ttf
+    - family: DancingScript
+      fonts:
+        - asset: assets/fonts/DancingScript-SemiBold.ttf
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

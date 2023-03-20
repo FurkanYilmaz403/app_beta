@@ -50,7 +50,14 @@ class _AddressState extends State<CurrentAddressBlock> {
                             const Offset(0, 3), // changes position of shadow
                       ),
                     ],
-                    color: secondaryColor,
+                    gradient: LinearGradient(
+                      colors: [
+                        secondaryColor.withOpacity(1),
+                        secondaryColor.withOpacity(0.6)
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
                     border: const Border.symmetric(
                       horizontal: BorderSide(
                         color: accentColor,

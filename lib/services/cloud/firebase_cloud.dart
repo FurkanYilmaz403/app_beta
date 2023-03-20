@@ -181,4 +181,10 @@ class FirebaseCloud {
           .set({"Güncel Adres": null}, SetOptions(merge: true));
     }
   }
+
+  Future<String> getName() async {
+    final userDocs =
+        await users.where("Kullanıcı ID", isEqualTo: user?.uid).get();
+    return await userDocs.docs.first["İsim"];
+  }
 }
