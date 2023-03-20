@@ -1,5 +1,5 @@
 import 'package:app_beta/constants/constants.dart';
-import 'package:app_beta/screens/side_screens.dart/add_address_screen.dart';
+import 'package:app_beta/screens/side_screens.dart/address/add_address_screen.dart';
 import 'package:app_beta/services/cloud/firebase_cloud.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';

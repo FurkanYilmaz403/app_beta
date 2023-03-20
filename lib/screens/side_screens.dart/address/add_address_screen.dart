@@ -234,6 +234,8 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Lütfen bir adres başlığı giriniz.';
+                                } else if (value.length > 8) {
+                                  return 'Lütfen en fazla 8 karakterli bir başlık giriniz.';
                                 }
                                 return null;
                               },
