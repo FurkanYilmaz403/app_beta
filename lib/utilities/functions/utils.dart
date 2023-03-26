@@ -26,7 +26,7 @@ class Utils {
       "Aramıza dönmene sevindik $name.",
       "Selamlar, $name.",
       "Hoşgeldin $name, umarız iyi vakit geçiriyorsundur.",
-      "Neye ihtiyacın var, $name",
+      "Neye ihtiyacın var, $name?",
       "$name, servisimizi nasıl buldun?",
       "Güzel günler, $name.",
       "Sevgili $name, hoş geldin.",

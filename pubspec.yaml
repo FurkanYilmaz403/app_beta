@@ -52,6 +52,9 @@ dependencies:
   animation_wrappers: ^3.0.0
   google_maps_flutter: ^2.2.5
   http: ^0.13.5
+  counter_button:
+    git:
+      url: https://github.com/FurkanYilmaz403/counter_button.git
 
 dev_dependencies:
   flutter_test:

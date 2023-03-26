@@ -121,6 +121,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.1"
+  counter_button:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: "175310e62ed50d578050e349fe61a2256059cdbc"
+      url: "https://github.com/FurkanYilmaz403/counter_button"
+    source: git
+    version: "1.0.1"
   crypto:
     dependency: transitive
     description:

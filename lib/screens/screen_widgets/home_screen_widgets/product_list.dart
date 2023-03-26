@@ -3,6 +3,7 @@ import 'package:app_beta/constants/constants.dart';
 import 'package:app_beta/services/cloud/firebase_cloud.dart';
 import 'package:app_beta/utilities/functions/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:counter_button/counter_button.dart';
 import 'package:flutter/material.dart';
 
 class ProductList extends StatelessWidget {
@@ -168,154 +169,159 @@ class ProductCard extends StatefulWidget {
 }
 
 class _ProductCardState extends State<ProductCard> {
-  num count = 0;
-
   final screenSize = Utils().getScreenSize();
+  num count = 0;
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
     final bool isKG = (widget.product["ölçü"] == "kg");
-    return FadedSlideAnimation(
-      beginOffset: const Offset(-1, 0),
-      endOffset: Offset.zero,
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Card(
-          color: primaryColor,
-          shadowColor: primaryColor,
-          shape: RoundedRectangleBorder(
-            side: const BorderSide(color: accentColor, width: 3),
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-          elevation: 30,
-          child: InkWell(
-            onTap: () {
-              if (count <= 0.01) {
-                setState(() {
-                  count = 1;
-                });
-              } else {
-                setState(() {
-                  count = 0;
-                });
-              }
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: AnimatedContainer(
-                decoration:
-                    BoxDecoration(border: Border.all(color: accentColor)),
-                duration: Duration.zero,
-                width: screenSize.width * 0.38,
-                height: (count >= (isKG ? 0.1 : 1)) ? 310 : 210,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Image.network(
-                      widget.imageUrl,
-                      height: 150,
-                      fit: BoxFit.cover,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Center(
-                        child: Text(
-                          widget.product.id.toCapitalized(),
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: lightTextColor,
+    return FutureBuilder<num?>(
+      future: FirebaseCloud().isOnTheCart(widget.product.id),
+      builder: (context, snapshot) {
+        if (snapshot.hasData && snapshot.data != null) {
+          count = snapshot.data!;
+        }
+        return FadedSlideAnimation(
+          beginOffset: const Offset(-1, 0),
+          endOffset: Offset.zero,
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Stack(
+              children: [
+                Card(
+                  color: primaryColor,
+                  shadowColor: primaryColor,
+                  shape: RoundedRectangleBorder(
+                    side: const BorderSide(color: accentColor, width: 3),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  elevation: 30,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: AnimatedContainer(
+                      decoration:
+                          BoxDecoration(border: Border.all(color: accentColor)),
+                      duration: Duration.zero,
+                      width: screenSize.width * 0.38,
+                      height: 210,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Image.network(
+                            widget.imageUrl,
+                            height: 150,
+                            fit: BoxFit.cover,
                           ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Center(
-                        child: Text(
-                          "${widget.product['fiyat'].toStringAsFixed(2)} TL/${widget.product['ölçü']}",
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: lightTextColor,
-                          ),
-                        ),
-                      ),
-                    ),
-                    if (count >= (isKG ? 0.1 : 1))
-                      FadedSlideAnimation(
-                        beginOffset: const Offset(0, -1),
-                        endOffset: Offset.zero,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.remove),
-                              color: lightTextColor,
-                              onPressed: () {
-                                setState(() {
-                                  if (isKG) {
-                                    count -= 0.1;
-                                  } else {
-                                    count--;
-                                  }
-                                });
-                              },
-                            ),
-                            Text(
-                              isKG
-                                  ? "${count.toStringAsFixed(1)} kg"
-                                  : "${count.toStringAsFixed(0)} tane",
-                              style: const TextStyle(color: lightTextColor),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.add),
-                              color: lightTextColor,
-                              onPressed: () {
-                                setState(() {
-                                  if (isKG) {
-                                    count += 0.1;
-                                  } else {
-                                    count++;
-                                  }
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    if (count >= (isKG ? 0.1 : 1))
-                      FadedSlideAnimation(
-                        beginOffset: const Offset(0, -1),
-                        endOffset: Offset.zero,
-                        child: Center(
-                          child: ElevatedButton(
-                            onPressed: () async {},
-                            style: ElevatedButton.styleFrom(
-                              elevation: 10,
-                              shadowColor: accentColor,
-                              backgroundColor: accentColor,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10)),
-                              ),
-                            ),
-                            child: const Text(
-                              'Sepete Ekle',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: darkTextColor,
+                          Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Center(
+                              child: Text(
+                                widget.product.id.toCapitalized(),
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: lightTextColor,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      )
-                  ],
+                          Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Center(
+                              child: Text(
+                                "${widget.product['fiyat'].toStringAsFixed(2)} TL/${widget.product['ölçü']}",
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: lightTextColor,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+                Positioned(
+                  right: 0,
+                  top: 0,
+                  child: Column(
+                    children: [
+                      if (count < 0.1)
+                        ScaleAnimation(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: secondaryColor,
+                              border: Border.all(
+                                width: 2,
+                                color: accentColor,
+                              ),
+                              borderRadius: BorderRadius.circular(4.0),
+                            ),
+                            width: 35.0,
+                            height: 32.0,
+                            child: IconButton(
+                              onPressed: () async {
+                                setState(() {
+                                  count = 1;
+                                });
+                                await FirebaseCloud()
+                                    .addToCart(widget.product, count);
+                              },
+                              icon: const Icon(
+                                Icons.add_circle_outline_outlined,
+                                color: accentColor,
+                              ),
+                              padding: EdgeInsets.zero,
+                            ),
+                          ),
+                        ),
+                      if (count > 0.1)
+                        FadedSlideAnimation(
+                          beginOffset: const Offset(0, -1),
+                          endOffset: Offset.zero,
+                          child: CounterButton(
+                            addIcon: const Icon(
+                              Icons.add_circle_outline_outlined,
+                              color: accentColor,
+                            ),
+                            removeIcon: const Icon(
+                              Icons.remove_circle_outline_outlined,
+                              color: accentColor,
+                            ),
+                            count: count,
+                            onChange: (value) async {
+                              WidgetsBinding.instance
+                                  .addPostFrameCallback((_) => setState(() {
+                                        count = value;
+                                        isLoading = true;
+                                      }));
+
+                              await FirebaseCloud()
+                                  .addToCart(widget.product, value);
+                              WidgetsBinding.instance
+                                  .addPostFrameCallback((_) => setState(() {
+                                        count = value;
+                                        isLoading = false;
+                                      }));
+                            },
+                            loading: isLoading,
+                            countBoxColor: primaryColor,
+                            countColor: lightTextColor,
+                            boxColor: secondaryColor,
+                            borderColor: accentColor,
+                            step: isKG ? 0.5 : 1,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

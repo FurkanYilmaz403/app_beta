@@ -187,4 +187,35 @@ class FirebaseCloud {
         await users.where("Kullanıcı ID", isEqualTo: user?.uid).get();
     return await userDocs.docs.first["İsim"];
   }
+
+  Future<num?> isOnTheCart(String id) async {
+    final userDocs =
+        await users.where("Kullanıcı ID", isEqualTo: user?.uid).get();
+    final userReference = userDocs.docs.first.reference;
+    final snapshot = await userReference.collection("Sepet").doc(id).get();
+    if (snapshot.exists) {
+      return snapshot["miktar"];
+    } else {
+      return null;
+    }
+  }
+
+  Future<void> addToCart(product, count) async {
+    final newCount = double.parse(count.toStringAsFixed(1));
+
+    final user = FirebaseAuth.instance.currentUser;
+    final userDocs =
+        await users.where("Kullanıcı ID", isEqualTo: user?.uid).get();
+    final userDoc = userDocs.docs.first;
+    final cartRef = userDoc.reference.collection("Sepet");
+    if (newCount == 0) {
+      await cartRef.doc(product.id).delete();
+    } else {
+      final cartItem = {
+        "miktar": newCount,
+        "toplam": product["fiyat"] * newCount,
+      };
+      await cartRef.doc(product.id).set(cartItem, SetOptions(merge: true));
+    }
+  }
 }
