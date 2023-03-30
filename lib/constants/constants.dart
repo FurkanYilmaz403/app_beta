@@ -1,5 +1,5 @@
 import 'package:app_beta/screens/main_app_screen//home_screen.dart';
-import 'package:app_beta/screens/main_app_screen/card_screen.dart';
+import 'package:app_beta/screens/main_app_screen/cart_screen.dart';
 import 'package:app_beta/screens/main_app_screen/orders_screen.dart';
 import 'package:app_beta/screens/main_app_screen/profile_screen.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +7,7 @@ import 'package:flutter_login/flutter_login.dart';
 
 const List<Widget> screens = [
   HomeScreen(),
-  CardScreen(),
+  CartScreen(),
   OrdersScreen(),
   ProfileScreen(),
 ];
