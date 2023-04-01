@@ -213,9 +213,17 @@ class FirebaseCloud {
     } else {
       final cartItem = {
         "miktar": newCount,
+        "fiyat": product["fiyat"],
         "toplam": product["fiyat"] * newCount,
+        "ölçü": product["ölçü"],
       };
       await cartRef.doc(product.id).set(cartItem, SetOptions(merge: true));
     }
+  }
+
+  Future<QuerySnapshot> getCart() async {
+    final userDocs =
+        await users.where("Kullanıcı ID", isEqualTo: user?.uid).get();
+    return await userDocs.docs.first.reference.collection("Sepet").get();
   }
 }

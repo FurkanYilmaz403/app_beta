@@ -48,7 +48,7 @@ class _ScreenLayoutState extends State<ScreenLayout> {
         ),
         body: PageView(
           controller: pageController,
-          scrollDirection: Axis.vertical,
+          physics: const NeverScrollableScrollPhysics(),
           children: screens,
         ),
         bottomNavigationBar: Container(

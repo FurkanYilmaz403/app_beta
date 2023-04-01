@@ -5,11 +5,11 @@ import 'package:app_beta/screens/main_app_screen/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 
-const List<Widget> screens = [
-  HomeScreen(),
+List<Widget> screens = [
+  const HomeScreen(),
   CartScreen(),
-  OrdersScreen(),
-  ProfileScreen(),
+  const OrdersScreen(),
+  const ProfileScreen(),
 ];
 
 const String logo = "assets/images/logo.jpg";
