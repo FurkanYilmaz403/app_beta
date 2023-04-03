@@ -21,40 +21,45 @@ class _CartProductsState extends State<CartProducts> {
     return FutureBuilder<QuerySnapshot>(
       future: FirebaseCloud().getCart(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          if (snapshot.hasData) {
-            final cartProducts = <Widget>[];
-            for (final product in snapshot.data!.docs) {
-              cartProducts.add(
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 8.0),
-                  child: CartProductsCard(
-                    count: product["miktar"],
-                    product: product,
-                  ),
-                ),
-              );
-            }
-            return Container(
-              height: screenSize.height * 0.6,
-              child: ListView(
-                children: cartProducts,
+        if (snapshot.hasData) {
+          final cartProducts = <Widget>[];
+          for (final product in snapshot.data!.docs) {
+            final productReference = product.reference.path;
+            cartProducts.add(
+              StreamBuilder<DocumentSnapshot>(
+                stream: FirebaseCloud().getCartProduct(productReference),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 8.0),
+                      child: CartProductsCard(
+                        product: snapshot.data!,
+                      ),
+                    );
+                  } else {
+                    return const SizedBox.shrink();
+                  }
+                },
               ),
             );
-          } else if (snapshot.hasError) {
-            return const Text('Bir hata oluştu.');
-          } else {
-            return const Text('Ürünler yüklenemedi.');
           }
+
+          return Container(
+            height: screenSize.height * 0.6,
+            child: ListView(
+              children: cartProducts,
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return const Text('Bir hata oluştu.');
         } else {
           return const Padding(
             padding: EdgeInsets.all(16.0),
             child: Center(
-              child: CircularProgressIndicator(
-                color: warningColor,
-              ),
-            ),
+                child: CircularProgressIndicator(
+              color: warningColor,
+            )),
           );
         }
       },
@@ -63,10 +68,8 @@ class _CartProductsState extends State<CartProducts> {
 }
 
 class CartProductsCard extends StatefulWidget {
-  final QueryDocumentSnapshot product;
-  num count;
-  CartProductsCard({Key? key, required this.product, required this.count})
-      : super(key: key);
+  final DocumentSnapshot product;
+  const CartProductsCard({Key? key, required this.product}) : super(key: key);
 
   @override
   State<CartProductsCard> createState() => _CartProductsCardState();
@@ -142,7 +145,7 @@ class _CartProductsCardState extends State<CartProductsCard> {
                             beginOffset: const Offset(0, -1),
                             endOffset: Offset.zero,
                             child: Text(
-                              "${(widget.product["fiyat"] * widget.count).toStringAsFixed(2)} TL",
+                              "${(widget.product["fiyat"] * widget.product["miktar"]).toStringAsFixed(2)} TL",
                               style: const TextStyle(
                                 fontSize: 28,
                                 fontWeight: FontWeight.bold,
@@ -170,20 +173,10 @@ class _CartProductsCardState extends State<CartProductsCard> {
                           Icons.remove_circle_outline_outlined,
                           color: accentColor,
                         ),
-                        count: widget.count,
+                        count: widget.product["miktar"],
                         onChange: (value) async {
-                          WidgetsBinding.instance
-                              .addPostFrameCallback((_) => setState(() {
-                                    widget.count = value;
-                                    isLoading = true;
-                                  }));
                           await FirebaseCloud()
                               .addToCart(widget.product, value);
-                          WidgetsBinding.instance
-                              .addPostFrameCallback((_) => setState(() {
-                                    widget.count = value;
-                                    isLoading = false;
-                                  }));
                         },
                         loading: isLoading,
                         countBoxColor: primaryColor,
@@ -199,12 +192,9 @@ class _CartProductsCardState extends State<CartProductsCard> {
             ),
           );
         } else {
-          return const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Center(
-                child: CircularProgressIndicator(
-              color: warningColor,
-            )),
+          return const SizedBox(
+            height: 124,
+            width: 100,
           );
         }
       },

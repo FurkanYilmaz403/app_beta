@@ -2,10 +2,7 @@ import 'package:app_beta/screens/screen_widgets/cart_screen_widgets/cart_product
 import 'package:flutter/material.dart';
 
 class CartScreen extends StatelessWidget {
-  CartScreen({super.key});
-
-  final GlobalKey<State<CartProducts>> _cartProductsKey =
-      GlobalKey<State<CartProducts>>();
+  const CartScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

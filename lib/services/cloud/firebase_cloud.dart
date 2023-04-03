@@ -226,4 +226,8 @@ class FirebaseCloud {
         await users.where("Kullanıcı ID", isEqualTo: user?.uid).get();
     return await userDocs.docs.first.reference.collection("Sepet").get();
   }
+
+  Stream<DocumentSnapshot> getCartProduct(String path) {
+    return FirebaseFirestore.instance.doc(path).snapshots();
+  }
 }
