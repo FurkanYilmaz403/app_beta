@@ -44,9 +44,20 @@ class _CartProductsState extends State<CartProducts> {
               ),
             );
           }
-
           return Container(
-            height: screenSize.height * 0.6,
+            height: screenSize.height * 0.65,
+            decoration: BoxDecoration(
+              color: secondaryColor,
+              border: Border.all(
+                color: primaryColor,
+                width: 3,
+              ),
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(30),
+                bottomRight: Radius.circular(30),
+              ),
+              boxShadow: const [BoxShadow(color: primaryColor, blurRadius: 30)],
+            ),
             child: ListView(
               children: cartProducts,
             ),
