@@ -81,7 +81,7 @@ class _AddressScreenState extends State<AddressScreen> {
                             Navigator.pop(context);
                           },
                         ),
-                        if (loading1) CircularProgressIndicator()
+                        if (loading1) const CircularProgressIndicator()
                       ]),
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 20.0, vertical: 10.0),

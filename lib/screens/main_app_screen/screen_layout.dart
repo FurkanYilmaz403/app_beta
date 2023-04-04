@@ -1,4 +1,5 @@
 import 'package:app_beta/constants/constants.dart';
+import 'package:app_beta/services/cloud/firebase_cloud.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -37,11 +38,29 @@ class _ScreenLayoutState extends State<ScreenLayout> {
           child: AppBar(
             backgroundColor: primaryColor,
             shadowColor: accentColor,
-            title: Image.asset(
-              logo,
-              width: logoSize,
-              height: logoSize,
-            ),
+            title: (currentPage == 1)
+                ? const Text(
+                    "Sepet",
+                    style: TextStyle(color: lightTextColor, fontSize: 28),
+                  )
+                : Image.asset(
+                    logo,
+                    width: logoSize,
+                    height: logoSize,
+                  ),
+            actions: [
+              if (currentPage == 1)
+                IconButton(
+                  onPressed: () async {
+                    await FirebaseCloud().deleteCart();
+                  },
+                  icon: const Icon(
+                    Icons.delete_sweep_sharp,
+                    color: errorColor,
+                    size: 35,
+                  ),
+                ),
+            ],
             centerTitle: true,
             systemOverlayStyle: SystemUiOverlayStyle.dark,
           ),

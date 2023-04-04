@@ -13,6 +13,8 @@ class CartProducts extends StatefulWidget {
   State<CartProducts> createState() => _CartProductsState();
 }
 
+//TODO her karta silme butonu bir de tüm sepeti silme butonu lazım, sonrasında firebaseclouddan stream ile toplam fiyat çekilmeli
+//fiyatın yanına da devam et butonu.
 class _CartProductsState extends State<CartProducts> {
   final screenSize = Utils().getScreenSize();
 
@@ -21,7 +23,7 @@ class _CartProductsState extends State<CartProducts> {
     return FutureBuilder<QuerySnapshot>(
       future: FirebaseCloud().getCart(),
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
+        if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
           final cartProducts = <Widget>[];
           for (final product in snapshot.data!.docs) {
             final productReference = product.reference.path;
@@ -29,14 +31,31 @@ class _CartProductsState extends State<CartProducts> {
               StreamBuilder<DocumentSnapshot>(
                 stream: FirebaseCloud().getCartProduct(productReference),
                 builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0, vertical: 8.0),
-                      child: CartProductsCard(
-                        product: snapshot.data!,
+                  if (snapshot.hasData && snapshot.data!.exists) {
+                    return Stack(children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0, vertical: 8.0),
+                        child: CartProductsCard(
+                          product: snapshot.data!,
+                        ),
                       ),
-                    );
+                      Positioned(
+                        right: -2,
+                        top: -8,
+                        child: FadedScaleAnimation(
+                          child: IconButton(
+                            onPressed: () async {
+                              await FirebaseCloud().cartDeleteProduct(product);
+                            },
+                            icon: const Icon(
+                              Icons.delete_sharp,
+                              color: errorColor,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ]);
                   } else {
                     return const SizedBox.shrink();
                   }
@@ -61,6 +80,42 @@ class _CartProductsState extends State<CartProducts> {
             child: ListView(
               children: cartProducts,
             ),
+          );
+        } else if (snapshot.hasData && snapshot.data!.docs.isEmpty) {
+          return Container(
+            height: screenSize.height * 0.65,
+            width: screenSize.width,
+            decoration: BoxDecoration(
+              color: secondaryColor,
+              border: Border.all(
+                color: primaryColor,
+                width: 3,
+              ),
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(30),
+                bottomRight: Radius.circular(30),
+              ),
+              boxShadow: const [BoxShadow(color: primaryColor, blurRadius: 30)],
+            ),
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const [
+                  Text(
+                    "Sepetiniz şimdilik boş gözüküyor.",
+                    style: TextStyle(
+                      color: darkTextColor,
+                      fontSize: 32,
+                      fontFamily: "DancingScript",
+                    ),
+                  ),
+                  Padding(padding: EdgeInsets.symmetric(vertical: 16)),
+                  Icon(
+                    Icons.shopping_cart_outlined,
+                    color: primaryColor,
+                    size: 72,
+                  ),
+                ]),
           );
         } else if (snapshot.hasError) {
           return const Text('Bir hata oluştu.');

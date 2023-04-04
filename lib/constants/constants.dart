@@ -7,7 +7,7 @@ import 'package:flutter_login/flutter_login.dart';
 
 List<Widget> screens = [
   const HomeScreen(),
-  CartScreen(),
+  const CartScreen(),
   const OrdersScreen(),
   const ProfileScreen(),
 ];

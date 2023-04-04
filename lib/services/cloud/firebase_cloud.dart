@@ -221,6 +221,28 @@ class FirebaseCloud {
     }
   }
 
+  Future<void> cartDeleteProduct(product) async {
+    final userDocs =
+        await users.where("Kullanıcı ID", isEqualTo: user?.uid).get();
+    final userDoc = userDocs.docs.first;
+    final cartRef = userDoc.reference.collection("Sepet");
+    await cartRef.doc(product.id).delete();
+  }
+
+  Future<void> deleteCart() async {
+    final userDocs =
+        await users.where("Kullanıcı ID", isEqualTo: user?.uid).get();
+    final userDoc = userDocs.docs.first;
+    final cart = await userDoc.reference.collection("Sepet").get();
+    final batch = FirebaseFirestore.instance.batch();
+
+    for (final doc in cart.docs) {
+      batch.delete(doc.reference);
+    }
+
+    return batch.commit();
+  }
+
   Future<QuerySnapshot> getCart() async {
     final userDocs =
         await users.where("Kullanıcı ID", isEqualTo: user?.uid).get();
@@ -229,5 +251,24 @@ class FirebaseCloud {
 
   Stream<DocumentSnapshot> getCartProduct(String path) {
     return FirebaseFirestore.instance.doc(path).snapshots();
+  }
+
+  Stream<double> getCartTotal() async* {
+    final userDocs =
+        await users.where("Kullanıcı ID", isEqualTo: user?.uid).get();
+    final userDoc = userDocs.docs.first;
+    final cartRef = userDoc.reference.collection("Sepet");
+
+    double total = 0;
+
+    yield* cartRef.snapshots().map((snapshot) {
+      total = 0;
+      for (final doc in snapshot.docs) {
+        final data = doc.data();
+        final price = data["toplam"] as double;
+        total += price;
+      }
+      return total;
+    });
   }
 }
