@@ -55,6 +55,7 @@ dependencies:
   counter_button:
     git:
       url: https://github.com/FurkanYilmaz403/counter_button.git
+  percent_indicator: ^4.2.3
 
 dev_dependencies:
   flutter_test:

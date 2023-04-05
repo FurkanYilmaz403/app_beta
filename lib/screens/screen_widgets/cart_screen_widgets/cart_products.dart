@@ -13,15 +13,13 @@ class CartProducts extends StatefulWidget {
   State<CartProducts> createState() => _CartProductsState();
 }
 
-//TODO her karta silme butonu bir de tüm sepeti silme butonu lazım, sonrasında firebaseclouddan stream ile toplam fiyat çekilmeli
-//fiyatın yanına da devam et butonu.
 class _CartProductsState extends State<CartProducts> {
   final screenSize = Utils().getScreenSize();
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<QuerySnapshot>(
-      future: FirebaseCloud().getCart(),
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseCloud().getCart(),
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
           final cartProducts = <Widget>[];
@@ -64,7 +62,7 @@ class _CartProductsState extends State<CartProducts> {
             );
           }
           return Container(
-            height: screenSize.height * 0.65,
+            height: screenSize.height * 0.62,
             decoration: BoxDecoration(
               color: secondaryColor,
               border: Border.all(
@@ -83,7 +81,7 @@ class _CartProductsState extends State<CartProducts> {
           );
         } else if (snapshot.hasData && snapshot.data!.docs.isEmpty) {
           return Container(
-            height: screenSize.height * 0.65,
+            height: screenSize.height * 0.62,
             width: screenSize.width,
             decoration: BoxDecoration(
               color: secondaryColor,

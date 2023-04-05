@@ -79,3 +79,5 @@ const logoTag = "uniqueLogoTag";
 
 const googleMapsDistanceMatrixApiKey =
     "AIzaSyBAnafgLncUjEYYgsOvCJcQQfCmLdTc8Jk";
+
+const minCart = 50;

@@ -127,7 +127,7 @@ packages:
       path: "."
       ref: HEAD
       resolved-ref: "175310e62ed50d578050e349fe61a2256059cdbc"
-      url: "https://github.com/FurkanYilmaz403/counter_button"
+      url: "https://github.com/FurkanYilmaz403/counter_button.git"
     source: git
     version: "1.0.1"
   crypto:
@@ -482,6 +482,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.8.2"
+  percent_indicator:
+    dependency: "direct main"
+    description:
+      name: percent_indicator
+      sha256: c37099ad833a883c9d71782321cb65c3a848c21b6939b6185f0ff6640d05814c
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.2.3"
   petitparser:
     dependency: transitive
     description:

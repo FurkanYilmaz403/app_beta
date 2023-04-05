@@ -243,10 +243,14 @@ class FirebaseCloud {
     return batch.commit();
   }
 
-  Future<QuerySnapshot> getCart() async {
+  Stream<QuerySnapshot> getCart() async* {
     final userDocs =
         await users.where("Kullanıcı ID", isEqualTo: user?.uid).get();
-    return await userDocs.docs.first.reference.collection("Sepet").get();
+    final snapshots =
+        userDocs.docs.first.reference.collection("Sepet").snapshots();
+    await for (final snapshot in snapshots) {
+      yield snapshot;
+    }
   }
 
   Stream<DocumentSnapshot> getCartProduct(String path) {
@@ -270,5 +274,27 @@ class FirebaseCloud {
       }
       return total;
     });
+  }
+
+  Future<String?> checkStock() async {
+    final userDocs =
+        await users.where("Kullanıcı ID", isEqualTo: user?.uid).get();
+    final userRef = userDocs.docs.first.reference;
+    final userDoc = await userRef.get();
+    final cartProducts = await userRef.collection("Sepet").get();
+    final warehouseDoc =
+        await userRef.collection("Adresler").doc(userDoc["Güncel Adres"]).get();
+    final warehouse = await FirebaseFirestore.instance
+        .collection("depo")
+        .doc(warehouseDoc["Depo"])
+        .collection("stok")
+        .get();
+    for (final element in cartProducts.docs) {
+      if (element["miktar"] >
+          warehouse.docs.where((el) => el.id == element.id).first["stok"]) {
+        return element.id;
+      }
+    }
+    return null;
   }
 }

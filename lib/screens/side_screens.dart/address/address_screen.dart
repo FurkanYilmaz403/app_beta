@@ -78,7 +78,9 @@ class _AddressScreenState extends State<AddressScreen> {
                             setState(() {
                               loading1 = false;
                             });
-                            Navigator.pop(context);
+                            if (mounted) {
+                              Navigator.pop(context);
+                            }
                           },
                         ),
                         if (loading1) const CircularProgressIndicator()
@@ -110,7 +112,9 @@ class _AddressScreenState extends State<AddressScreen> {
                           setState(() {
                             loading1 = true;
                           });
-                          Navigator.pop(context);
+                          if (mounted) {
+                            Navigator.pop(context);
+                          }
                         },
                       ),
                     ),

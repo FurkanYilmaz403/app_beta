@@ -291,15 +291,21 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                                       });
 
                                       if (error == null) {
-                                        popSnackBar(context,
-                                            "Adres başarıyla eklendi.");
+                                        if (mounted) {
+                                          popSnackBar(context,
+                                              "Adres başarıyla eklendi.");
+                                        }
                                       } else {
-                                        popSnackBar(context, error);
+                                        if (mounted) {
+                                          popSnackBar(context, error);
+                                        }
                                       }
                                       widget.refresh();
                                       await Future.delayed(
                                           const Duration(milliseconds: 2250));
-                                      Navigator.pop(context);
+                                      if (mounted) {
+                                        Navigator.pop(context);
+                                      }
                                     }
                                   }
                                 },

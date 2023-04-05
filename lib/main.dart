@@ -45,7 +45,5 @@ class MainScreen extends StatelessWidget {
         },
       ),
     );
-
-    //TODO flutter_cache_manager, sayfalar arası değişim yapıldığında sayfa en baştan yükleniyor profil kısmı için iyi olabilir ama ana ekran için kaldığımız yerden devam etmek çok daha iyi. Ayrıca her seferinde firebaseden data çekmek biraz gereksiz. Çözüm bul.
   }
 }
